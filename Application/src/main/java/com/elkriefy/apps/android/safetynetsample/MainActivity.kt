@@ -24,6 +24,8 @@ import com.google.android.gms.safetynet.SafetyNet
 import com.google.android.gms.safetynet.SafetyNetApi
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import kotlinx.coroutines.experimental.CommonPool
+import kotlinx.coroutines.experimental.launch
 import org.json.JSONObject
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -41,6 +43,7 @@ class MainActivity : SampleActivityBase() {
     private lateinit var verifyButton: MorphingButton
 
     private var mResult: String? = null
+    private var mPassed: Boolean = false
 
     private var mPendingResult: String? = null
     private lateinit var textOutput: TextView
@@ -68,19 +71,22 @@ class MainActivity : SampleActivityBase() {
                     process(mResult)
                     result.fold(
                             success = { json ->
+                                mPassed = true
                                 val bool = json.obj().optBoolean(("isValidSignature"), false)
                                 Log.d(TAG, bool.toString())
-                                prepAnimation("completed_process.json")
-                            }, failure = { error ->
-                        Log.d(TAG, "error")
-                        prepAnimation("empty_list.json")
-                    }
+                            },
+                            failure = { error ->
+                                mPassed = false
+                                Log.d(TAG, "error")
+                            }
                     )
+                    prepAnimation(mPassed)
                 }
     }
 
 
-    private fun prepAnimation(filename: String) {
+    private fun prepAnimation(flag: Boolean) {
+        val filename: String = if (flag) "completed_process.json" else "empty_list.json"
         val pico: LottieComposition = LottieComposition.Factory.
                 fromFileSync(this@MainActivity, filename)
         animationView.pauseAnimation()
@@ -130,6 +136,7 @@ class MainActivity : SampleActivityBase() {
         if (savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_RESULT)) {
             // Store data as pending result for display after activity has resumed.
             mPendingResult = savedInstanceState.getString(BUNDLE_RESULT)
+            mPassed = savedInstanceState.getBoolean(BUNDLE_BOOL)
         }
 
     }
@@ -141,11 +148,12 @@ class MainActivity : SampleActivityBase() {
             mResult = mPendingResult
             mPendingResult = null
             Log.d(TAG, "SafetyNet result:\n" + mResult + "\n")
-
-            if (animationView.isAnimating) {
-                animationView.pauseAnimation()
-            }
-
+            process(mResult)
+            prepAnimation(mPassed)
+        }
+        //Init safeBrowsing
+        launch(CommonPool) {
+            SafetyNet.getClient(this@MainActivity).initSafeBrowsing()
         }
     }
 
@@ -173,6 +181,7 @@ class MainActivity : SampleActivityBase() {
         private val RESULT_CODE_DIALOG = 1892
         private val TAG = "MainActivity"
         private val BUNDLE_RESULT = "result"
+        private val BUNDLE_BOOL = "boolean"
     }
 
 
@@ -181,6 +190,8 @@ class MainActivity : SampleActivityBase() {
         if (animationView.isAnimating) {
             animationView.pauseAnimation()
         }
+        //ShutDown Safe Browsing...
+        SafetyNet.getClient(this).shutdownSafeBrowsing()
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {
@@ -193,6 +204,8 @@ class MainActivity : SampleActivityBase() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putString(BUNDLE_RESULT, mResult)
+        outState.putBoolean(BUNDLE_BOOL, mPassed)
+
     }
 
     private fun sendSafetyNetRequest() {
