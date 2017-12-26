@@ -1,0 +1,29 @@
+buildscript {
+    ext.kotlin_version = '1.2.10'
+    repositories {
+        google()
+        maven { url 'https://maven.google.com' }
+        jcenter()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.1.0-alpha06'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+
+    ext.build_tools_version = '27.0.3'
+    ext.support_version = '27.0.2'
+    ext.google_play_services_version = '11.8.0'
+    ext.kotlinx_coroutines_version = '+'
+    ext.lottieVersion = '2.5.0-beta1'
+    ext.fuel_version = '1.12.0'
+
+    allprojects {
+        repositories {
+            google()
+            maven { url 'https://maven.google.com' }
+            jcenter()
+            maven { url "https://jitpack.io" }
+        }
+    }
+}

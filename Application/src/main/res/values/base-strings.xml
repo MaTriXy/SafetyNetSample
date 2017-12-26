@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">SafetyNetSample</string>
+    <string name="intro_message">
+        <![CDATA[
+            Demo SafetyNet API in Google Play Services.\n Show if device passed Android compatibility testing.
+        ]]>
+    </string>
+</resources>
