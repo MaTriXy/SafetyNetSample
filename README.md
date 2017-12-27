@@ -17,6 +17,12 @@ Pre-requisites
 - Latest Google Play Services
 - Android Support Repository
 
+----------------
+## Screenshots
+
+<img src="https://github.com/MaTriXy/SafetyNetSample/blob/master/ScreenShots/ss_1.png?raw=true" width = "264" height = "464"/><img src="https://github.com/MaTriXy/SafetyNetSample/blob/master/ScreenShots/ss_2.png?raw=true" width = "264" height = "464"/><img src="https://github.com/MaTriXy/SafetyNetSample/blob/master/ScreenShots/ss_3.png?raw=true" width = "264" height = "464"/>
+
+
 
 Getting Started
 ---------------
