@@ -24,6 +24,7 @@ import com.google.android.gms.safetynet.SafetyNet
 import com.google.android.gms.safetynet.SafetyNetApi
 import com.google.android.gms.tasks.OnFailureListener
 import com.google.android.gms.tasks.OnSuccessListener
+import com.google.android.gms.tasks.Tasks
 import kotlinx.coroutines.experimental.CommonPool
 import kotlinx.coroutines.experimental.launch
 import org.json.JSONObject
@@ -152,9 +153,11 @@ class MainActivity : SampleActivityBase() {
             prepAnimation(mPassed)
         }
         //Init safeBrowsing
-        launch(CommonPool) {
-            SafetyNet.getClient(this@MainActivity).initSafeBrowsing()
-        }
+//        launch(CommonPool) {
+//            SafetyNet.getClient(this@MainActivity).initSafeBrowsing()
+//        }
+
+        Tasks.await(SafetyNet.getClient(this@MainActivity).initSafeBrowsing())
     }
 
 
